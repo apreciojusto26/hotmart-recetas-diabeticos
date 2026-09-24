@@ -1,0 +1,38 @@
+# Dependencias
+node_modules/
+.pnpm-store/
+
+# Build y caché
+dist/
+.astro/
+.vercel/
+.netlify/
+.cache/
+*.tsbuildinfo
+
+# Variables de entorno y secretos
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Sistema y editores
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# Herramientas de IA / memoria local
+.claude/
+.atl/
+.engram/
+
+# Originales sin optimizar (los usados están optimizados en public/)
+/assets/

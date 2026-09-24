@@ -1,0 +1,104 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --color-vividia-green: #829c78;
+  --color-vividia-green-dark: #4f6849;
+  --color-vividia-green-light: #eef4eb;
+  --color-vividia-coral: #f27f62;
+  --color-vividia-coral-dark: #df684d;
+  --color-vividia-cream: #fbf8f1;
+  --color-vividia-text: #263228;
+  --color-vividia-muted: #6d776f;
+  --color-vividia-deep: #1f3324;
+  --color-vividia-gold: #e3b45a;
+  --color-vividia-gold-light: #f6dfa5;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-shine: shine 3.2s ease-in-out infinite;
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0) rotate(var(--tw-float-rot, 0deg));
+    }
+    50% {
+      transform: translateY(-10px) rotate(var(--tw-float-rot, 0deg));
+    }
+  }
+
+  @keyframes shine {
+    0% {
+      transform: translateX(-120%) skewX(-20deg);
+    }
+    55%,
+    100% {
+      transform: translateX(260%) skewX(-20deg);
+    }
+  }
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    min-width: 320px;
+    background: var(--color-vividia-cream);
+    color: var(--color-vividia-text);
+    font-family: var(--font-sans);
+  }
+
+  button,
+  input {
+    font: inherit;
+  }
+}
+
+.capture-background {
+  background:
+    radial-gradient(circle at 85% 15%, rgb(242 127 98 / 12%), transparent 30%),
+    radial-gradient(circle at 10% 85%, rgb(130 156 120 / 14%), transparent 30%),
+    var(--color-vividia-cream);
+}
+
+.modal-backdrop {
+  background: rgb(27 37 29 / 62%);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.modal-card::before,
+.modal-card::after {
+  position: absolute;
+  z-index: 0;
+  border-radius: 9999px;
+  content: "";
+}
+
+.modal-card::before {
+  top: -95px;
+  right: -70px;
+  width: 180px;
+  height: 180px;
+  background: rgb(242 127 98 / 11%);
+}
+
+.modal-card::after {
+  bottom: -60px;
+  left: -60px;
+  width: 120px;
+  height: 120px;
+  background: rgb(130 156 120 / 12%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}

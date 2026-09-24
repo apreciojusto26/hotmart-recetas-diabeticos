@@ -1,0 +1,612 @@
+---
+import '../styles/global.css';
+
+const CHECKOUT_URL = 'https://pay.hotmart.com/L101237086P?checkoutMode=10&bid=1790254008276';
+
+// Precios en €. OLD_PRICE y BONUS_VALUES deben ser valores reales de referencia.
+const fmt = (n: number) => n.toFixed(2).replace('.', ',');
+const PRICE_N = 17.68;
+const OLD_PRICE_N = 24.99;
+const BONUS_VALUES = [12, 10, 8, 9, 7];
+const TOTAL_VALUE_N = OLD_PRICE_N + BONUS_VALUES.reduce((a, b) => a + b, 0);
+
+const PRICE = fmt(PRICE_N);
+const OLD_PRICE = fmt(OLD_PRICE_N);
+const TOTAL_VALUE = fmt(TOTAL_VALUE_N);
+const SAVINGS = fmt(TOTAL_VALUE_N - PRICE_N);
+
+// SEO: keyword principal "recetas para diabéticos" (+ "200 recetas para diabéticos").
+const title = '200 Recetas para Diabéticos + 5 Bonos | Recetario Digital';
+const description =
+  'Recetario digital con 200+ recetas para diabéticos: desayunos, almuerzos, cenas y postres fáciles. Incluye 5 bonos y garantía de 7 días.';
+const PAGE_PATH = '/200-recetas-para-diabeticos';
+const site = Astro.site;
+const canonical = site ? new URL(PAGE_PATH, site).href : undefined;
+const abs = (path: string) => (site ? new URL(path, site).href : path);
+const ogImage = abs('/ventas/og-200-recetas-para-diabeticos.jpg');
+
+const icons = {
+  book: 'M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2V5Zm0 16a2 2 0 0 1 2-2h13',
+  gift: 'M3 8h18v4H3V8Zm2 4h14v9H5v-9Zm7-4v13M12 8c-2 0-4-1-4-3s3-2 4 3Zm0 0c2 0 4-1 4-3s-3-2-4 3Z',
+  device: 'M7 3h10a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Zm4 15h2',
+  shield: 'M12 3 4 6v6c0 4.5 3.2 8 8 9 4.8-1 8-4.5 8-9V6l-8-3Zm-3 9 2 2 4-4',
+  bolt: 'M13 2 4 14h7l-1 8 9-12h-7l1-8Z',
+  lock: 'M6 11h12v9H6v-9Zm2 0V8a4 4 0 0 1 8 0v3',
+  check: 'm5 12 5 5 9-10',
+  question: 'M9 9a3 3 0 1 1 4.2 2.7c-.8.4-1.2 1-1.2 1.8M12 17.5v.5',
+  repeat: 'M17 2l4 4-4 4M3 11V9a3 3 0 0 1 3-3h15M7 22l-4-4 4-4M21 13v2a3 3 0 0 1-3 3H3',
+  layers: 'm12 3 9 5-9 5-9-5 9-5Zm-9 9 9 5 9-5M3 16l9 5 9-5',
+  sun: 'M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm0-13v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4',
+  plate: 'M12 20a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm0-4a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z',
+  moon: 'M20 14.5A8 8 0 0 1 9.5 4 8.5 8.5 0 1 0 20 14.5Z',
+  apple: 'M12 7c-2-2-6-1-6 4 0 4 2 9 4 9 1 0 1.5-.5 2-.5s1 .5 2 .5c2 0 4-5 4-9 0-5-4-6-6-4Zm0 0c0-2 1-3 3-4',
+  cake: 'M4 20h16v-6H4v6Zm0-6c0-2 2-3 4-3h8c2 0 4 1 4 3M12 11V6m0-3v1',
+};
+
+const problems = [
+  {
+    icon: 'question',
+    title: '¿Y hoy qué cocino?',
+    text: 'Con diabetes, elegir cada comida agota. Tener las ideas listas te ahorra esa duda todos los días.',
+  },
+  {
+    icon: 'repeat',
+    title: 'Siempre lo mismo',
+    text: 'Cuando repites los mismos platos, comer se vuelve aburrido. Aquí tienes variedad de sobra.',
+  },
+  {
+    icon: 'layers',
+    title: 'Todo en un solo lugar',
+    text: 'Deja de buscar recetas sueltas por internet. Todo el material ordenado, en tu móvil o tablet.',
+  },
+];
+
+const categories = [
+  { icon: 'sun', name: 'Desayunos' },
+  { icon: 'plate', name: 'Almuerzos' },
+  { icon: 'moon', name: 'Cenas' },
+  { icon: 'apple', name: 'Snacks' },
+  { icon: 'cake', name: 'Postres' },
+];
+
+const bonuses = [
+  {
+    n: 1,
+    name: 'Plan de jugoterapia',
+    text: 'Jugos y batidos naturales para acompañar tu día a día.',
+  },
+  {
+    n: 2,
+    name: 'Panes sin gluten',
+    text: 'Recetas de panes caseros, sin gluten y fáciles de preparar.',
+  },
+  {
+    n: 3,
+    name: 'Guía de alimentación inteligente',
+    text: 'Una guía clara para elegir mejor qué poner en tu plato.',
+  },
+  {
+    n: 4,
+    name: 'Pierde peso en 15 días',
+    text: 'Un recetario con propuestas ligeras para 15 días.',
+  },
+  {
+    n: 5,
+    name: '30 comidas saludables',
+    text: '30 recetas extra para no quedarte nunca sin ideas.',
+  },
+];
+
+const steps = [
+  { title: 'Pulsa el botón', text: 'Te llevamos al checkout seguro de Hotmart.' },
+  { title: 'Completa tu pago', text: 'Pago único con los métodos disponibles en Hotmart.' },
+  { title: 'Recibe el acceso', text: 'Te llega por correo. Ábrelo desde móvil, tablet u ordenador.' },
+];
+
+const testimonials = [
+  { src: 1, w: 720, h: 975, alt: 'Mensaje de una clienta agradeciendo el recetario y contando que ahora se siente más tranquila al preparar sus comidas' },
+  { src: 2, w: 480, h: 867, alt: 'Conversación de WhatsApp sobre una ensalada del recetario y mejor descanso' },
+  { src: 3, w: 480, h: 1007, alt: 'Conversación de WhatsApp de un cliente que recomienda el recetario' },
+];
+
+const included = [
+  { label: 'Recetario con 200+ recetas', value: OLD_PRICE },
+  ...bonuses.map((b) => ({ label: `Bono ${b.n} · ${b.name}`, value: fmt(BONUS_VALUES[b.n - 1]) })),
+];
+
+const faqs = [
+  {
+    q: '¿Cómo recibo el recetario?',
+    a: 'Cuando se confirma el pago, recibes las instrucciones de acceso en el correo que usaste en la compra.',
+  },
+  {
+    q: '¿Es un producto físico?',
+    a: 'No. Es 100% digital: lo consultas desde el móvil, la tablet o el ordenador.',
+  },
+  {
+    q: '¿Qué incluye exactamente?',
+    a: 'El recetario principal con más de 200 recetas y los 5 bonos digitales que ves en esta página.',
+  },
+  {
+    q: '¿Para quién es este recetario para diabéticos?',
+    a: 'Para personas con diabetes y para quienes cocinan para ellas y buscan ideas variadas de desayunos, almuerzos, cenas, snacks y postres. Es un material culinario y educativo.',
+  },
+  {
+    q: '¿Qué tipos de recetas para diabéticos incluye?',
+    a: 'Más de 200 recetas organizadas por momento del día: desayunos, almuerzos, cenas, snacks y postres, con ingredientes fáciles de encontrar. Además, 5 bonos con jugos, panes sin gluten, una guía de alimentación y 30 comidas saludables.',
+  },
+  {
+    q: '¿Los bonos se pagan aparte?',
+    a: 'No. Los 5 bonos vienen incluidos en la misma compra del pack, sin ningún costo adicional.',
+  },
+  {
+    q: '¿Cómo funciona la garantía?',
+    a: 'Tienes 7 días de garantía según las condiciones de Hotmart. Si no es lo que esperabas, pides el reembolso desde la propia plataforma.',
+  },
+  {
+    q: '¿Sustituye a mi médico o nutricionista?',
+    a: 'No. El material es educativo y culinario. No reemplaza un diagnóstico, un tratamiento ni recomendaciones médicas o nutricionales personalizadas.',
+  },
+  {
+    q: '¿Quién procesa el pago?',
+    a: 'Hotmart, una plataforma de pagos segura. La compra y la entrega del acceso se gestionan ahí.',
+  },
+];
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: '200 Recetas para Diabéticos + 5 Bonos',
+    description,
+    image: ogImage,
+    brand: { '@type': 'Brand', name: 'Vividia' },
+    category: 'Recetario digital',
+    ...(canonical && { url: canonical }),
+    offers: {
+      '@type': 'Offer',
+      price: PRICE_N.toFixed(2),
+      priceCurrency: 'EUR',
+      availability: 'https://schema.org/InStock',
+      url: CHECKOUT_URL,
+    },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  },
+];
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content={description} />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta name="theme-color" content="#1f3324" />
+    {canonical && <link rel="canonical" href={canonical} />}
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es_ES" />
+    <meta property="og:site_name" content="Vividia" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    {canonical && <meta property="og:url" content={canonical} />}
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:alt" content="Pack de 200 recetas para diabéticos con 5 bonos de regalo" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <title>{title}</title>
+  </head>
+  <body class="overflow-x-hidden pb-20 md:pb-0">
+    <!-- ANNOUNCEMENT -->
+    <div class="bg-vividia-deep px-4 py-2.5 text-center text-xs font-semibold tracking-wide text-white sm:text-[13px]">
+      <span class="text-vividia-gold">REGALO:</span> 5 bonos incluidos con el pack · Garantía de 7 días
+    </div>
+
+    <!-- HERO -->
+    <header class="relative overflow-hidden bg-vividia-cream">
+      <div class="pointer-events-none absolute -top-32 -right-24 size-[420px] rounded-full bg-vividia-coral/15 blur-3xl"></div>
+      <div class="pointer-events-none absolute -bottom-40 -left-24 size-[420px] rounded-full bg-vividia-green/20 blur-3xl"></div>
+
+      <div class="relative mx-auto max-w-[1180px] px-5 pt-6 pb-16 sm:px-6 lg:pt-8 lg:pb-24">
+        <img src="/assets/logo-vividia.png" alt="Vividia Oficial" width="1774" height="887" class="mx-auto mb-8 w-[130px] lg:mx-0 lg:w-[160px]" />
+
+        <div class="grid items-center gap-12 lg:grid-cols-[1.02fr_0.98fr] lg:gap-14">
+          <div class="text-center lg:text-left">
+            <div class="mb-5 inline-flex items-center gap-2 rounded-full border border-vividia-green-dark/10 bg-white px-4 py-2 text-[11px] font-bold tracking-[0.8px] text-vividia-green-dark shadow-sm">
+              <span class="size-2 animate-pulse rounded-full bg-vividia-coral"></span>
+              PACK COMPLETO · 200+ RECETAS + 5 BONOS
+            </div>
+
+            <h1 class="mb-5 font-display text-[38px] leading-[1.04] font-extrabold tracking-[-1.6px] text-vividia-text sm:text-5xl lg:text-[clamp(44px,4.8vw,64px)] lg:tracking-[-2.6px]">
+              <span class="text-vividia-coral">200 recetas para diabéticos</span> para cocinar con <span class="text-vividia-green-dark">variedad</span> y sin dudas
+            </h1>
+
+            <p class="mx-auto mb-7 max-w-[560px] text-base leading-[1.65] text-vividia-muted sm:text-lg lg:mx-0">
+              Recetario digital con desayunos, almuerzos, cenas, snacks y postres para personas con diabetes. Y hoy te llevas <strong class="text-vividia-text">5 bonos de regalo</strong> sin pagar nada extra.
+            </p>
+
+            <ul class="mx-auto mb-8 grid max-w-[480px] gap-3 text-left lg:mx-0">
+              {
+                ['Más de 200 recetas ordenadas por momento del día', '5 guías y recetarios extra incluidos', 'Acceso inmediato desde móvil, tablet u ordenador'].map((t) => (
+                  <li class="flex items-center gap-3 text-[15px] font-semibold">
+                    <span class="flex size-6 shrink-0 items-center justify-center rounded-full bg-vividia-green text-white">
+                      <svg viewBox="0 0 24 24" class="size-3.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={icons.check} /></svg>
+                    </span>
+                    {t}
+                  </li>
+                ))
+              }
+            </ul>
+
+            <div class="flex flex-col items-center gap-4 sm:flex-row sm:justify-center lg:justify-start">
+              <a href={CHECKOUT_URL} target="_blank" rel="nofollow noopener" class="cta group relative isolate inline-flex min-h-[62px] w-full items-center justify-center overflow-hidden rounded-2xl bg-linear-to-br from-[#f48a6d] to-[#f26a4b] px-8 text-base font-extrabold text-white shadow-[0_14px_32px_rgba(242,127,98,.4)] transition hover:-translate-y-0.5 sm:w-auto sm:text-[17px]">
+                <span class="pointer-events-none absolute inset-y-0 -left-1/3 -z-10 w-1/4 animate-shine bg-white/30"></span>
+                Quiero el pack completo
+                <span class="ml-2.5 transition-transform group-hover:translate-x-1" aria-hidden="true">→</span>
+              </a>
+            </div>
+
+            <p class="mt-4 flex items-center justify-center gap-1.5 text-[12px] text-vividia-muted lg:justify-start">
+              <svg viewBox="0 0 24 24" class="size-3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={icons.lock} /></svg>
+              Pago seguro procesado por Hotmart
+            </p>
+          </div>
+
+          <div class="relative mx-auto w-full max-w-[560px]">
+            <div class="absolute inset-[6%] rounded-full bg-linear-to-br from-[#dfead9] to-white"></div>
+            <div class="relative rotate-[1.5deg] rounded-[28px] bg-white p-3 shadow-[0_40px_80px_rgba(52,71,56,.22)] sm:p-4">
+              <img src="/ventas/pack-completo.webp" alt="Pack completo de 200 recetas para diabéticos con 5 bonos de regalo: recetario digital, jugoterapia, panes sin gluten y guías" width="1100" height="1100" fetchpriority="high" class="block h-auto w-full rounded-[20px]" />
+            </div>
+            <span class="absolute -top-3 -right-1 rotate-6 animate-float rounded-xl bg-vividia-coral px-4 py-2.5 text-[11px] font-extrabold tracking-wider text-white shadow-[0_12px_24px_rgba(242,127,98,.35)] sm:right-2 sm:text-xs" style="--tw-float-rot:6deg">+5 BONOS DE REGALO</span>
+            <span class="absolute -bottom-4 left-0 flex -rotate-3 items-center gap-2 rounded-xl bg-vividia-deep px-4 py-2.5 text-[11px] font-bold text-white shadow-xl sm:left-4 sm:text-xs">
+              <svg viewBox="0 0 24 24" class="size-4 text-vividia-gold" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={icons.shield} /></svg>
+              Garantía de 7 días
+            </span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <!-- STRIP -->
+      <section class="bg-vividia-deep text-white">
+        <div class="mx-auto grid max-w-[1180px] grid-cols-2 gap-y-6 px-5 py-8 sm:px-6 lg:grid-cols-4">
+          {
+            [
+              ['200+', 'recetas'],
+              ['5', 'bonos de regalo'],
+              ['7 días', 'de garantía'],
+              ['100%', 'digital e inmediato'],
+            ].map(([n, l]) => (
+              <div class="text-center">
+                <p class="m-0 font-display text-3xl font-extrabold text-vividia-gold sm:text-4xl">{n}</p>
+                <p class="m-0 mt-1 text-xs text-white/70 sm:text-sm">{l}</p>
+              </div>
+            ))
+          }
+        </div>
+      </section>
+
+      <!-- PROBLEM -->
+      <section class="bg-white py-20 sm:py-24">
+        <div class="mx-auto max-w-[1080px] px-5 sm:px-6">
+          <div class="mx-auto max-w-[720px] text-center">
+            <p class="mb-3 text-[11px] font-extrabold tracking-[1.3px] text-vividia-coral">MÁS IDEAS, MENOS COMPLICACIONES</p>
+            <h2 class="mb-4 font-display text-[30px] leading-[1.12] font-extrabold tracking-[-1.2px] sm:text-[44px] sm:tracking-[-1.8px]">¿Te quedas sin ideas cuando llega la hora de cocinar?</h2>
+            <p class="m-0 text-base leading-[1.7] text-vividia-muted sm:text-[17px]">Decidir qué preparar cada día cansa. Con un recetario ordenado, la respuesta ya está a un toque.</p>
+          </div>
+
+          <div class="mt-12 grid gap-5 md:grid-cols-3">
+            {
+              problems.map((p) => (
+                <article class="rounded-3xl border border-vividia-green-dark/10 bg-vividia-cream p-7 transition hover:-translate-y-1 hover:shadow-[0_18px_40px_rgba(52,71,56,.1)]">
+                  <div class="mb-5 flex size-13 items-center justify-center rounded-2xl bg-vividia-coral/15 text-vividia-coral-dark">
+                    <svg viewBox="0 0 24 24" class="size-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={icons[p.icon as keyof typeof icons]} /></svg>
+                  </div>
+                  <h3 class="mb-2 font-display text-lg font-extrabold">{p.title}</h3>
+                  <p class="m-0 text-sm leading-[1.65] text-vividia-muted">{p.text}</p>
+                </article>
+              ))
+            }
+          </div>
+        </div>
+      </section>
+
+      <!-- PRODUCT -->
+      <section class="bg-vividia-green-light py-20 sm:py-24">
+        <div class="mx-auto grid max-w-[1080px] items-center gap-12 px-5 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
+          <div class="relative mx-auto w-full max-w-[420px]">
+            <div class="absolute inset-x-[8%] top-[10%] bottom-0 rounded-[40px] bg-white"></div>
+            <div class="absolute -top-2 -left-2 size-16 rounded-full bg-vividia-coral/20"></div>
+            <img src="/ventas/libro-200.webp" alt="Portada del recetario 200 recetas para diabéticos" width="720" height="1080" loading="lazy" class="relative mx-auto block h-auto w-[86%] mix-blend-multiply drop-shadow-2xl" />
+          </div>
+
+          <div>
+            <p class="mb-3 text-[11px] font-extrabold tracking-[1.3px] text-vividia-coral">EL RECETARIO PRINCIPAL</p>
+            <h2 class="mb-4 font-display text-[30px] leading-[1.12] font-extrabold tracking-[-1.2px] sm:text-[42px] sm:tracking-[-1.7px]">
+              Recetas para diabéticos para <span class="text-vividia-green-dark">todo el día</span>
+            </h2>
+            <p class="mb-7 text-base leading-[1.7] text-vividia-muted">Más de 200 recetas fáciles para diabéticos, con ingredientes que encuentras en cualquier tienda: desde desayunos y comidas hasta cenas, snacks y postres. Ordenadas para que encuentres lo que buscas en segundos.</p>
+
+            <div class="mb-8 flex flex-wrap gap-2.5">
+              {
+                categories.map((c) => (
+                  <span class="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2.5 text-sm font-bold text-vividia-green-dark shadow-sm">
+                    <svg viewBox="0 0 24 24" class="size-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={icons[c.icon as keyof typeof icons]} /></svg>
+                    {c.name}
+                  </span>
+                ))
+              }
+            </div>
+
+            <ul class="mb-8 grid gap-4">
+              {
+                [
+                  ['Recetas fáciles y explicadas', 'Ingredientes y pasos claros para preparar cada plato.'],
+                  ['Variedad real', 'Deja de repetir siempre los mismos platos.'],
+                  ['En tu bolsillo', 'Formato digital: lo abres desde móvil, tablet u ordenador.'],
+                ].map(([t, d]) => (
+                  <li class="flex gap-3.5">
+                    <span class="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-lg bg-white text-vividia-green-dark">
+                      <svg viewBox="0 0 24 24" class="size-4" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={icons.check} /></svg>
+                    </span>
+                    <span>
+                      <strong class="block">{t}</strong>
+                      <span class="text-sm text-vividia-muted">{d}</span>
+                    </span>
+                  </li>
+                ))
+              }
+            </ul>
+
+            <a href={CHECKOUT_URL} target="_blank" rel="nofollow noopener" class="inline-flex min-h-[58px] w-full items-center justify-center rounded-2xl bg-linear-to-br from-[#f48a6d] to-[#f26a4b] px-8 text-base font-extrabold text-white shadow-[0_12px_28px_rgba(242,127,98,.32)] transition hover:-translate-y-0.5 sm:w-auto">
+              Ver el pack completo <span class="ml-2" aria-hidden="true">→</span>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- BONUSES -->
+      <section class="relative overflow-hidden bg-vividia-deep py-20 text-white sm:py-24">
+        <div class="pointer-events-none absolute top-0 left-1/2 h-[420px] w-[820px] -translate-x-1/2 rounded-full bg-vividia-gold/10 blur-3xl"></div>
+        <div class="relative mx-auto max-w-[1180px] px-5 sm:px-6">
+          <div class="mx-auto max-w-[760px] text-center">
+            <p class="mb-3 text-[11px] font-extrabold tracking-[1.3px] text-vividia-gold">Y ADEMÁS, DE REGALO</p>
+            <h2 class="mb-4 font-display text-[30px] leading-[1.12] font-extrabold tracking-[-1.2px] sm:text-[46px] sm:tracking-[-1.9px]">
+              5 bonos que llegan <span class="text-vividia-gold">sin costo extra</span>
+            </h2>
+            <p class="m-0 text-base leading-[1.7] text-white/70 sm:text-[17px]">Cuando llevas el pack completo, todo esto viene incluido. Cinco recursos para que tengas aún más opciones.</p>
+          </div>
+
+          <div class="mx-auto mt-12 max-w-[560px]">
+            <div class="rounded-[28px] bg-linear-to-br from-vividia-gold/60 via-vividia-gold-light/30 to-vividia-gold/60 p-[3px] shadow-[0_30px_80px_rgba(0,0,0,.4)]">
+              <img src="/ventas/bonos-portada.webp" alt="Los 5 bonos de regalo: jugoterapia, panes sin gluten, 15 días para perder peso, guía de alimentación y 30 recetas" width="1000" height="1000" loading="lazy" class="block h-auto w-full rounded-[25px]" />
+            </div>
+          </div>
+
+          <div class="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {
+              bonuses.map((b) => (
+                <article class="group overflow-hidden rounded-3xl border border-white/10 bg-white/[.06] backdrop-blur transition hover:-translate-y-1 hover:border-vividia-gold/50">
+                  <div class="relative">
+                    <img src={`/ventas/bono-${b.n}.webp`} alt={`Bono ${b.n}: ${b.name}`} width="800" height="800" loading="lazy" class="block aspect-[4/3] w-full object-cover object-center transition duration-500 group-hover:scale-105" />
+                    <span class="absolute top-3 left-3 rounded-full bg-vividia-gold px-3 py-1 text-[10px] font-extrabold tracking-wider text-vividia-deep">BONO {b.n}</span>
+                    <span class="absolute top-3 right-3 rounded-full bg-vividia-coral px-3 py-1 text-[10px] font-extrabold tracking-wider text-white">GRATIS</span>
+                  </div>
+                  <div class="p-6">
+                    <h3 class="mb-2 font-display text-lg leading-snug font-extrabold">{b.name}</h3>
+                    <p class="m-0 text-sm leading-[1.6] text-white/70">{b.text}</p>
+                    <p class="mt-4 mb-0 flex items-center gap-2 border-t border-white/10 pt-4 text-xs text-white/60">
+                      Valor <s>{fmt(BONUS_VALUES[b.n - 1])} €</s>
+                      <span class="font-extrabold tracking-wide text-vividia-gold">→ HOY GRATIS</span>
+                    </p>
+                  </div>
+                </article>
+              ))
+            }
+
+            <article class="flex flex-col justify-center rounded-3xl bg-linear-to-br from-vividia-coral to-[#e35f42] p-8 text-center shadow-[0_20px_50px_rgba(242,127,98,.3)]">
+              <svg viewBox="0 0 24 24" class="mx-auto mb-4 size-10 text-white" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={icons.gift} /></svg>
+              <h3 class="mb-2 font-display text-xl font-extrabold">Todo en una sola compra</h3>
+              <p class="mb-6 text-sm leading-[1.6] text-white/90">200+ recetas y los 5 bonos, con acceso inmediato.</p>
+              <a href={CHECKOUT_URL} target="_blank" rel="nofollow noopener" class="inline-flex min-h-[54px] items-center justify-center rounded-2xl bg-white px-6 text-[15px] font-extrabold text-vividia-coral-dark transition hover:-translate-y-0.5">
+                Quiero mis bonos <span class="ml-2" aria-hidden="true">→</span>
+              </a>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- TESTIMONIALS -->
+      <section class="bg-vividia-cream py-20 sm:py-24">
+        <div class="mx-auto max-w-[1080px] px-5 sm:px-6">
+          <div class="mx-auto max-w-[700px] text-center">
+            <p class="mb-3 text-[11px] font-extrabold tracking-[1.3px] text-vividia-coral">MENSAJES REALES</p>
+            <h2 class="mb-4 font-display text-[30px] leading-[1.12] font-extrabold tracking-[-1.2px] sm:text-[44px] sm:tracking-[-1.8px]">Lo que cuentan quienes ya lo usan</h2>
+            <p class="m-0 text-base leading-[1.7] text-vividia-muted">Capturas tal cual las recibimos y valoraciones de la plataforma.</p>
+          </div>
+
+          <div class="mt-12 columns-1 gap-5 sm:columns-2 lg:columns-3 [&>*]:mb-5 [&>*]:break-inside-avoid">
+            {
+              testimonials.map((t) => (
+                <figure class="m-0 overflow-hidden rounded-3xl bg-white p-2.5 shadow-[0_14px_40px_rgba(52,71,56,.12)]">
+                  <img src={`/ventas/testimonio-${t.src}.webp`} alt={t.alt} width={t.w} height={t.h} loading="lazy" class="block h-auto w-full rounded-[18px]" />
+                </figure>
+              ))
+            }
+            <figure class="m-0 overflow-hidden rounded-3xl bg-white p-2.5 shadow-[0_14px_40px_rgba(52,71,56,.12)]">
+              <img src="/ventas/testimonio-4.webp" alt="Valoraciones de compradores del recetario para diabéticos en Hotmart: 4.7 de 5" width="634" height="1024" loading="lazy" class="block h-auto w-full rounded-[18px]" />
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <!-- HOW -->
+      <section class="bg-white py-20 sm:py-24">
+        <div class="mx-auto max-w-[1000px] px-5 sm:px-6">
+          <div class="text-center">
+            <p class="mb-3 text-[11px] font-extrabold tracking-[1.3px] text-vividia-coral">ACCESO EN 3 PASOS</p>
+            <h2 class="mb-12 font-display text-[30px] leading-[1.12] font-extrabold tracking-[-1.2px] sm:text-[42px] sm:tracking-[-1.7px]">Así de fácil recibes tu pack</h2>
+          </div>
+          <div class="grid gap-8 md:grid-cols-3">
+            {
+              steps.map((s, i) => (
+                <div class="relative text-center">
+                  <div class="mx-auto mb-5 flex size-14 items-center justify-center rounded-full bg-vividia-green-dark font-display text-xl font-extrabold text-white shadow-[0_10px_24px_rgba(79,104,73,.3)]">{i + 1}</div>
+                  <h3 class="mb-2 font-display text-lg font-extrabold">{s.title}</h3>
+                  <p class="mx-auto m-0 max-w-[280px] text-sm leading-[1.6] text-vividia-muted">{s.text}</p>
+                </div>
+              ))
+            }
+          </div>
+        </div>
+      </section>
+
+      <!-- OFFER -->
+      <section id="oferta" class="relative overflow-hidden bg-linear-to-b from-vividia-green-light to-vividia-cream py-20 sm:py-24">
+        <div class="mx-auto max-w-[1000px] px-5 sm:px-6">
+          <div class="overflow-hidden rounded-[32px] border border-vividia-green-dark/10 bg-white shadow-[0_30px_80px_rgba(52,71,56,.16)]">
+            <div class="bg-vividia-deep px-6 py-4 text-center text-xs font-extrabold tracking-[1.2px] text-vividia-gold sm:text-[13px]">PACK COMPLETO · 200+ RECETAS + 5 BONOS DE REGALO</div>
+
+            <div class="grid items-center gap-10 p-6 sm:p-10 lg:grid-cols-[0.85fr_1.15fr] lg:gap-12">
+              <div class="relative mx-auto h-[300px] w-full max-w-[340px] sm:h-[380px]">
+                <div class="absolute inset-4 rounded-full bg-vividia-green-light"></div>
+                <img src="/ventas/libro-200.webp" alt="Recetario de 200 recetas para diabéticos" width="720" height="1080" loading="lazy" class="absolute top-0 left-0 h-[88%] w-auto" />
+                <img src="/ventas/pierdepeso.webp" alt="Bono: Pierde peso en 15 días" width="640" height="769" loading="lazy" class="absolute right-0 bottom-0 h-[62%] w-auto rotate-6 drop-shadow-2xl" />
+              </div>
+
+              <div>
+                <h2 class="mb-5 font-display text-[28px] leading-[1.12] font-extrabold tracking-[-1.1px] sm:text-4xl">Llévate todo hoy, en un solo pago</h2>
+                <ul class="mb-6 grid">
+                  {
+                    included.map((item, i) => (
+                      <li class="flex items-center justify-between gap-3 border-b border-vividia-green-dark/10 py-3 text-sm">
+                        <span class="flex items-center gap-2.5 font-semibold">
+                          <svg viewBox="0 0 24 24" class="size-4 shrink-0 text-vividia-green-dark" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={icons.check} /></svg>
+                          {item.label}
+                        </span>
+                        <span class="flex shrink-0 items-center gap-2">
+                          <s class="text-xs text-vividia-muted">{item.value} €</s>
+                          <span class={`rounded-full px-2.5 py-1 text-[10px] font-extrabold tracking-wider ${i === 0 ? 'bg-vividia-green-light text-vividia-green-dark' : 'bg-vividia-coral/15 text-vividia-coral-dark'}`}>{i === 0 ? 'INCLUIDO' : 'GRATIS'}</span>
+                        </span>
+                      </li>
+                    ))
+                  }
+                </ul>
+
+                <div class="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1">
+                  <span class="text-sm text-vividia-muted">Valor total: <s>{TOTAL_VALUE} €</s></span>
+                  <span class="rounded-md bg-vividia-gold/25 px-2 py-0.5 text-xs font-extrabold text-vividia-deep">Ahorras {SAVINGS} €</span>
+                </div>
+
+                <div class="mb-1 flex items-end gap-2">
+                  <span class="font-display text-[64px] leading-none font-extrabold tracking-[-2.5px] text-vividia-deep">{PRICE}</span>
+                  <span class="mb-2 font-display text-3xl font-extrabold text-vividia-deep">€</span>
+                </div>
+                <p class="mb-5 text-xs text-vividia-muted"><strong class="text-vividia-text">IVA incluido.</strong> Pago único, sin suscripciones.</p>
+
+                <a href={CHECKOUT_URL} target="_blank" rel="nofollow noopener" class="cta group relative isolate flex min-h-[64px] w-full items-center justify-center overflow-hidden rounded-2xl bg-linear-to-br from-[#f48a6d] to-[#f26a4b] px-6 text-[17px] font-extrabold text-white shadow-[0_14px_32px_rgba(242,127,98,.4)] transition hover:-translate-y-0.5">
+                  <span class="pointer-events-none absolute inset-y-0 -left-1/3 -z-10 w-1/4 animate-shine bg-white/30"></span>
+                  Quiero el pack completo por {PRICE} € <span class="ml-2 transition-transform group-hover:translate-x-1" aria-hidden="true">→</span>
+                </a>
+
+                <div class="mt-4 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-[11px] text-vividia-muted">
+                  <span class="inline-flex items-center gap-1.5"><svg viewBox="0 0 24 24" class="size-3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={icons.lock} /></svg>Pago seguro</span>
+                  <span class="inline-flex items-center gap-1.5"><svg viewBox="0 0 24 24" class="size-3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={icons.bolt} /></svg>Acceso digital</span>
+                  <span class="inline-flex items-center gap-1.5"><svg viewBox="0 0 24 24" class="size-3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={icons.shield} /></svg>Garantía 7 días</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- GUARANTEE -->
+      <section class="bg-vividia-deep py-16 text-white sm:py-20">
+        <div class="mx-auto grid max-w-[820px] items-center gap-8 px-5 text-center sm:px-6 md:grid-cols-[auto_1fr] md:text-left">
+          <div class="mx-auto flex size-[130px] flex-col items-center justify-center rounded-full border-[3px] border-vividia-gold bg-linear-to-br from-vividia-gold/25 to-vividia-gold/5 font-display shadow-[0_0_50px_rgba(227,180,90,.25)]">
+            <span class="text-5xl leading-none font-extrabold text-vividia-gold">7</span>
+            <span class="text-xs font-extrabold tracking-[2px] text-vividia-gold-light">DÍAS</span>
+          </div>
+          <div>
+            <p class="mb-2 text-[11px] font-extrabold tracking-[1.2px] text-vividia-gold">GARANTÍA DE HOTMART</p>
+            <h2 class="mb-3 font-display text-3xl leading-[1.15] font-extrabold sm:text-4xl">Pruébalo sin riesgo</h2>
+            <p class="m-0 leading-[1.65] text-white/70">Tienes 7 días para revisar el material. Si no es lo que esperabas, puedes pedir el reembolso desde Hotmart según sus condiciones.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- FAQ -->
+      <section class="bg-white py-20 sm:py-24">
+        <div class="mx-auto max-w-[780px] px-5 sm:px-6">
+          <div class="text-center">
+            <p class="mb-3 text-[11px] font-extrabold tracking-[1.3px] text-vividia-coral">PREGUNTAS FRECUENTES</p>
+            <h2 class="mb-10 font-display text-[30px] leading-[1.12] font-extrabold tracking-[-1.2px] sm:text-[42px] sm:tracking-[-1.7px]">Todo claro antes de comprar</h2>
+          </div>
+          <div>
+            {
+              faqs.map((f) => (
+                <details class="group border-b border-vividia-green-dark/10">
+                  <summary class="flex cursor-pointer list-none items-center justify-between gap-4 py-5 text-left text-base font-bold marker:hidden [&::-webkit-details-marker]:hidden">
+                    {f.q}
+                    <span class="text-2xl leading-none text-vividia-coral transition-transform duration-200 group-open:rotate-45" aria-hidden="true">+</span>
+                  </summary>
+                  <p class="m-0 pb-5 text-[15px] leading-[1.7] text-vividia-muted">{f.a}</p>
+                </details>
+              ))
+            }
+          </div>
+        </div>
+      </section>
+
+      <!-- FINAL CTA -->
+      <section class="bg-vividia-cream px-5 py-16 sm:px-6 sm:py-20">
+        <div class="relative mx-auto max-w-[920px] overflow-hidden rounded-[32px] bg-vividia-deep px-6 py-14 text-center text-white sm:px-12 sm:py-16">
+          <div class="pointer-events-none absolute -top-24 -right-16 size-64 rounded-full bg-white/5"></div>
+          <div class="pointer-events-none absolute -bottom-24 -left-16 size-52 rounded-full bg-vividia-coral/20"></div>
+          <div class="relative">
+            <p class="mb-3 text-[11px] font-extrabold tracking-[1.3px] text-vividia-gold">TU RECETARIO TE ESPERA</p>
+            <h2 class="mx-auto mb-4 max-w-[640px] font-display text-3xl leading-[1.12] font-extrabold tracking-[-1.2px] sm:text-[44px] sm:tracking-[-1.8px]">Ten 200 recetas para diabéticos y 5 bonos siempre a mano</h2>
+            <p class="mx-auto mb-8 max-w-[520px] leading-[1.65] text-white/70">Acceso digital inmediato, pago único y 7 días de garantía.</p>
+            <a href={CHECKOUT_URL} target="_blank" rel="nofollow noopener" class="inline-flex min-h-[62px] w-full items-center justify-center rounded-2xl bg-linear-to-br from-[#f48a6d] to-[#f26a4b] px-8 text-base font-extrabold text-white shadow-[0_14px_32px_rgba(242,127,98,.4)] transition hover:-translate-y-0.5 sm:w-auto sm:text-[17px]">
+              Quiero acceder ahora <span class="ml-2" aria-hidden="true">→</span>
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="bg-vividia-cream px-5 pt-4 pb-12 text-center">
+      <img src="/assets/logo-vividia.png" alt="Vividia Oficial" width="1774" height="887" class="mx-auto mb-4 w-[120px]" />
+      <p class="mx-auto my-2 max-w-[720px] text-[11px] leading-[1.6] text-[#828b84]">El material tiene fines educativos y culinarios y no sustituye el asesoramiento médico o nutricional profesional. Los resultados varían entre personas.</p>
+      <p class="m-0 mt-3 text-[11px] text-[#828b84]">© 2026 Vividia Oficial</p>
+    </footer>
+
+    <!-- MOBILE STICKY CTA -->
+    <div class="fixed inset-x-0 bottom-0 z-50 border-t border-vividia-green-dark/10 bg-white/95 p-3 shadow-[0_-8px_28px_rgba(31,51,36,.14)] backdrop-blur md:hidden">
+      <a href={CHECKOUT_URL} target="_blank" rel="nofollow noopener" class="flex min-h-[52px] w-full items-center justify-center rounded-xl bg-linear-to-br from-[#f48a6d] to-[#f26a4b] px-4 text-[15px] font-extrabold text-white">
+        Quiero el pack completo <span class="ml-2" aria-hidden="true">→</span>
+      </a>
+    </div>
+  </body>
+</html>

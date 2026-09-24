@@ -1,0 +1,63 @@
+---
+import '../styles/global.css';
+
+const title = 'Página no encontrada | Vividia';
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#fbf8f1" />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <title>{title}</title>
+  </head>
+  <body>
+    <main class="capture-background relative flex min-h-screen items-center justify-center overflow-hidden px-5 py-12 text-center">
+      <div class="pointer-events-none absolute -top-32 -right-24 size-[380px] rounded-full bg-vividia-coral/15 blur-3xl"></div>
+      <div class="pointer-events-none absolute -bottom-40 -left-24 size-[380px] rounded-full bg-vividia-green/20 blur-3xl"></div>
+
+      <div class="relative w-full max-w-[560px]">
+        <a href="/" aria-label="Ir al inicio">
+          <img src="/assets/logo-vividia.png" alt="Vividia Oficial" width="1774" height="887" class="mx-auto mb-8 w-[140px]" />
+        </a>
+
+        <p class="m-0 font-display text-[110px] leading-none font-extrabold tracking-[-6px] text-vividia-green-dark sm:text-[150px]">
+          4<span class="text-vividia-coral">0</span>4
+        </p>
+
+        <h1 class="mt-4 mb-3 font-display text-[28px] leading-[1.15] font-extrabold tracking-[-1px] text-vividia-text sm:text-4xl">
+          Esta página no existe
+        </h1>
+        <p class="mx-auto mb-8 max-w-[420px] text-base leading-[1.65] text-vividia-muted">
+          Puede que el enlace esté roto o que la página se haya movido. Pero tus recetas siguen esperándote.
+        </p>
+
+        <div class="flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+          <a
+            href="/"
+            class="inline-flex min-h-[56px] w-full items-center justify-center rounded-2xl bg-linear-to-br from-[#f48a6d] to-[#f26a4b] px-8 text-base font-extrabold text-white shadow-[0_12px_28px_rgba(242,127,98,.32)] transition hover:-translate-y-0.5 focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-vividia-green-dark sm:w-auto"
+          >
+            Volver al inicio <span class="ml-2" aria-hidden="true">→</span>
+          </a>
+          <a
+            href="/200-recetas-para-diabeticos"
+            class="inline-flex min-h-[56px] w-full items-center justify-center rounded-2xl border border-vividia-green-dark/20 bg-white px-8 text-base font-bold text-vividia-green-dark transition hover:-translate-y-0.5 hover:border-vividia-green-dark/40 focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-vividia-coral sm:w-auto"
+          >
+            Ver las 200 recetas
+          </a>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>
