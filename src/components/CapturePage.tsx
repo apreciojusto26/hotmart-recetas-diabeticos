@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 
-const SUBSCRIPTION_URL = 'https://systeme.io/embedded/44674094/subscription';
+const LEAD_API_URL = '/api/lead';
 const SALES_PAGE_URL = '/200-recetas-para-diabeticos';
+const GENERIC_ERROR = 'No pudimos registrar tu email. Inténtalo de nuevo.';
 
 const benefits = [
   '7 desayunos fáciles y ricos',
@@ -39,6 +40,7 @@ const focusableSelector = [
 export default function CapturePage() {
   const [isOpen, setIsOpen] = useState(false);
   const [status, setStatus] = useState<'idle' | 'sending' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState(GENERIC_ERROR);
   const openerRef = useRef<HTMLButtonElement>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
   const firstInputRef = useRef<HTMLInputElement>(null);
@@ -47,16 +49,27 @@ export default function CapturePage() {
     event.preventDefault();
     if (status === 'sending') return;
 
+    const form = new FormData(event.currentTarget);
     setStatus('sending');
+
     try {
-      // Systeme.io no expone CORS: la respuesta es opaca, pero el alta se registra.
-      await fetch(SUBSCRIPTION_URL, {
+      const response = await fetch(LEAD_API_URL, {
         method: 'POST',
-        mode: 'no-cors',
-        body: new URLSearchParams(new FormData(event.currentTarget) as unknown as Record<string, string>),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: form.get('email'), hp: form.get('hp_check') }),
       });
+      const data = (await response.json().catch(() => null)) as { ok?: boolean; error?: string } | null;
+
+      if (!response.ok || !data?.ok) {
+        setErrorMessage(data?.error ?? GENERIC_ERROR);
+        setStatus('error');
+        return;
+      }
+
+      // Éxito: dejamos el botón en "Enviando..." hasta que el navegador cambie de página.
       window.location.assign(SALES_PAGE_URL);
     } catch {
+      setErrorMessage(GENERIC_ERROR);
       setStatus('error');
     }
   };
@@ -81,7 +94,7 @@ export default function CapturePage() {
 
       const focusableElements = Array.from(
         dialogRef.current.querySelectorAll<HTMLElement>(focusableSelector),
-      ).filter((element) => !element.hasAttribute('disabled'));
+      ).filter((element) => !element.hasAttribute('disabled') && element.tabIndex >= 0);
 
       if (focusableElements.length === 0) {
         event.preventDefault();
@@ -256,7 +269,16 @@ export default function CapturePage() {
               Introduce tu email y recibe el PDF directamente en tu correo.
             </p>
 
-            <form method="post" action={SUBSCRIPTION_URL} onSubmit={handleSubmit} className="flex flex-col gap-3">
+            <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+              {/* Honeypot anti-bot: fuera de pantalla, sin foco y oculto a lectores de pantalla. */}
+              <input
+                type="text"
+                name="hp_check"
+                tabIndex={-1}
+                autoComplete="off"
+                aria-hidden="true"
+                className="pointer-events-none absolute -left-[9999px] size-px opacity-0"
+              />
               <label htmlFor="email" className="sr-only">
                 Tu mejor correo electrónico
               </label>
@@ -280,7 +302,7 @@ export default function CapturePage() {
               </button>
               {status === 'error' && (
                 <p role="alert" className="m-0 text-[13px] text-vividia-coral-dark">
-                  No pudimos registrar tu email. Inténtalo de nuevo.
+                  {errorMessage}
                 </p>
               )}
             </form>
