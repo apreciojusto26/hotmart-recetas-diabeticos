@@ -3,6 +3,12 @@ import '../styles/global.css';
 
 const CHECKOUT_URL = 'https://pay.hotmart.com/L101237086P?checkoutMode=10&bid=1790254008276';
 
+// Botón "Pincha aquí" del banner: abre WhatsApp con un mensaje ya escrito.
+// Número en formato internacional, sin "+" ni espacios (+34 744 66 57 61).
+const WHATSAPP_NUMBER = '34744665761';
+const WHATSAPP_MESSAGE = 'Hola, acabo de pedir el recurso gratuito de los 7 desayunos y tengo una consulta.';
+const CONTACT_URL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;
+
 // Precios en €. OLD_PRICE y BONUS_VALUES deben ser valores reales de referencia.
 const fmt = (n: number) => n.toFixed(2).replace('.', ',');
 const PRICE_N = 17.68;
@@ -217,6 +223,55 @@ const jsonLd = [
     <title>{title}</title>
   </head>
   <body class="overflow-x-hidden pb-20 md:pb-0">
+    <!-- BANNER DE CONFIRMACIÓN: solo aparece al llegar desde el formulario (?enviado=1) -->
+    <div id="lead-banner" hidden>
+      <div role="status" aria-live="polite" class="lead-banner relative overflow-hidden border-b-[3px] border-vividia-gold bg-linear-to-r from-vividia-deep via-vividia-green-dark to-vividia-deep text-white shadow-[0_10px_30px_rgba(31,51,36,.35)]">
+        <div class="pointer-events-none absolute -top-16 -left-10 size-48 rounded-full bg-vividia-success/25 blur-3xl"></div>
+        <div class="pointer-events-none absolute -right-10 -bottom-16 size-48 rounded-full bg-vividia-coral/20 blur-3xl"></div>
+
+        <div class="relative mx-auto flex max-w-[1180px] flex-col items-center gap-4 px-5 py-5 pr-14 text-center sm:px-6 sm:pr-16 md:flex-row md:gap-6 md:py-4 md:text-left">
+          <div class="relative flex size-14 shrink-0 items-center justify-center">
+            <span class="lead-check-ring absolute inset-0 rounded-full bg-vividia-success" aria-hidden="true"></span>
+            <svg viewBox="0 0 52 52" class="relative size-14 drop-shadow-[0_6px_14px_rgba(62,207,142,.45)]" fill="none" aria-hidden="true">
+              <circle class="lead-check-circle" cx="26" cy="26" r="25" fill="#3ecf8e" />
+              <path class="lead-check-mark" d="M15 27.5l8 8L38 19" pathLength="1" stroke="#fff" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </div>
+
+          <div class="md:flex-1">
+            <p class="m-0 font-display text-lg leading-snug font-extrabold sm:text-xl">
+              ¡Tu recurso gratuito fue enviado a tu correo!
+            </p>
+            <p class="m-0 mt-1 text-sm leading-[1.55] text-white/80 sm:text-[15px]">
+              Para cualquier duda o consulta puedes escribirnos y te responderemos con gusto.
+            </p>
+          </div>
+
+          {
+            CONTACT_URL && (
+              <a
+                href={CONTACT_URL}
+                target="_blank"
+                rel="noopener"
+                class="group inline-flex min-h-[46px] shrink-0 items-center justify-center rounded-full bg-white px-6 text-sm font-extrabold text-vividia-deep shadow-[0_8px_20px_rgba(0,0,0,.25)] transition hover:-translate-y-0.5 hover:bg-vividia-gold-light focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-vividia-gold"
+              >
+                Pincha aquí <span class="ml-2 transition-transform group-hover:-translate-x-1" aria-hidden="true">←</span>
+              </a>
+            )
+          }
+        </div>
+
+        <button
+          type="button"
+          id="lead-banner-close"
+          aria-label="Cerrar aviso"
+          class="absolute top-2.5 right-3 flex size-10 cursor-pointer items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/25 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-vividia-gold sm:right-4"
+        >
+          <svg viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+        </button>
+      </div>
+    </div>
+
     <!-- ANNOUNCEMENT -->
     <div class="bg-vividia-deep px-4 py-2.5 text-center text-xs font-semibold tracking-wide text-white sm:text-[13px]">
       <span class="text-vividia-gold">REGALO:</span> 5 bonos incluidos con el pack · Garantía de 7 días
@@ -608,5 +663,22 @@ const jsonLd = [
         Quiero el pack completo <span class="ml-2" aria-hidden="true">→</span>
       </a>
     </div>
+
+    <script>
+      // Mostramos el banner solo si venimos del formulario y limpiamos la URL para que no reaparezca al recargar o compartir el enlace.
+      const banner = document.getElementById('lead-banner');
+      const params = new URLSearchParams(location.search);
+
+      if (banner && params.get('enviado') === '1') {
+        banner.hidden = false;
+        params.delete('enviado');
+        const query = params.toString();
+        history.replaceState(null, '', location.pathname + (query ? `?${query}` : '') + location.hash);
+      }
+
+      document.getElementById('lead-banner-close')?.addEventListener('click', () => {
+        if (banner) banner.hidden = true;
+      });
+    </script>
   </body>
 </html>

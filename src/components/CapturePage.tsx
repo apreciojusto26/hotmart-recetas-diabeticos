@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 
 const LEAD_API_URL = '/api/lead';
-const SALES_PAGE_URL = '/200-recetas-para-diabeticos';
+const SALES_PAGE_URL = '/200-recetas-para-diabeticos?enviado=1';
 const GENERIC_ERROR = 'No pudimos registrar tu email. Inténtalo de nuevo.';
 
 const benefits = [
