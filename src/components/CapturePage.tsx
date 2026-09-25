@@ -67,6 +67,10 @@ export default function CapturePage() {
       }
 
       // Éxito: dejamos el botón en "Enviando..." hasta que el navegador cambie de página.
+      // GA4: conversión "lead". `beacon` asegura el envío aunque la página cambie enseguida.
+      (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag?.('event', 'generate_lead', {
+        transport_type: 'beacon',
+      });
       window.location.assign(SALES_PAGE_URL);
     } catch {
       setErrorMessage(GENERIC_ERROR);

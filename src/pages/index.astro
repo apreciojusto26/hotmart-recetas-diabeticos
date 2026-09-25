@@ -1,5 +1,6 @@
 ---
 import CapturePage from '../components/CapturePage';
+import Analytics from '../components/Analytics.astro';
 import '../styles/global.css';
 
 const title = '7 desayunos fáciles para diabéticos (PDF gratis) | Vividia';
@@ -28,6 +29,7 @@ const description =
       rel="stylesheet"
     />
     <title>{title}</title>
+    <Analytics />
   </head>
   <body>
     <CapturePage client:load />
